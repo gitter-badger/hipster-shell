@@ -1,11 +1,13 @@
 'use strict';
 
 var readline = require('readline'),
-    colors = require('colors'),
     os = require('os'),
     fs = require('fs'),
+    log = require('./log.js'),
     childProcess = require('child_process'),
     rl = readline.createInterface(process.stdin, process.stdout);
+
+require('colors');
 
 //reference to a foreground child process
 var child;
@@ -15,24 +17,31 @@ function prompt() {
     rl.prompt();
 }
 
-console.log('Welcome to the hipster-shell.'.underline.yellow);
+log.w('Welcome to the hipster-shell.'.underline.yellow);
 
 function runProcess(command, args) {
     child = childProcess.spawn(command, args, {
         stdio: [
             'inherit'
         ]
+    }).on('error', function (err) {
+        if (err.code === 'ENOENT') {
+            log.i('Command not found: ' + command);
+        } else {
+            log.e('Unknown error: ' + err);
+        }
     });
+
     child.stdout.on('data', function (data) {
-        console.log('' + data); //note data to string conversion
+        log.i('' + data); //note data to string conversion
     });
 
     child.stderr.on('data', function (data) {
-        console.log('stderr: ' + data);
+        log.e('stderr: ' + data);
     });
 
     child.on('close', function (code) {
-        console.log('child process exited with code ' + code);
+        log.d('child process exited with code ' + code);
         prompt();
         child = undefined;
     });
@@ -71,13 +80,12 @@ rl.on('line', function (input) {
         prompt();
     }
 }).on('SIGINT', function () {
-    // console.log('SIGINT! closing child process!')
     if (child) {
         child.kill('SIGINT');
     }
     prompt();
 }).on('close', function () {
-    console.log('Cya!');
+    log.w('Cya!');
     process.exit(0);
 });
 
