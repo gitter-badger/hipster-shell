@@ -11,6 +11,7 @@ require('colors');
 
 //reference to a foreground child process
 var child;
+var previousDir = process.cwd();
 
 function prompt() {
     rl.setPrompt(os.hostname() + ' @ ' + process.cwd() + ' > '.green);
@@ -18,6 +19,24 @@ function prompt() {
 }
 
 log.w('Welcome to the hipster-shell.'.underline.yellow);
+
+function changeDir(destDir) {
+    if (destDir === '-') {
+        changeDir(previousDir);
+        return;
+    }
+
+    previousDir = process.cwd();
+    
+    try {
+        process.chdir(destDir);
+    } catch (err) {
+        if (err.code === 'ENOENT') {
+            log.e(destDir + ': No such file or directory.');
+        }
+        return;
+    }
+}
 
 function runProcess(command, args) {
     child = childProcess.spawn(command, args, {
@@ -37,7 +56,7 @@ function runProcess(command, args) {
     });
 
     child.stderr.on('data', function (data) {
-        log.e('stderr: ' + data);
+        log.e('' + data);
     });
 
     child.on('close', function (code) {
@@ -62,16 +81,11 @@ rl.on('line', function (input) {
         var destDir;
         if (args.length === 0) {
             destDir = process.env.HOME;
-        } else if (args.length === 1) {
-            if (args[0] === '-') {
-                throw 'cd - not implemented yet';
-            }
-
-            destDir = args[0];
         } else {
-            throw 'cd not yet full implemented';
+            destDir = args[0];
         }
-        process.chdir(destDir);
+
+        changeDir(destDir);
         prompt();
     } else if (input.length > 0) {
         //execute as a child process
@@ -89,4 +103,5 @@ rl.on('line', function (input) {
     process.exit(0);
 });
 
+readline.clearScreenDown(process.stdout);
 prompt();

@@ -7,9 +7,7 @@
 
     require('colors');
 
-    var Logger = function () {
-
-    };
+    var Logger = function () {};
 
     Logger.prototype.warn = function (msg) {
         console.log(msg.yellow);
@@ -18,7 +16,7 @@
     Logger.prototype.info = function (msg) {
         console.log(msg);
     };
-    
+
     Logger.prototype.debug = function (msg) {
         console.log(msg.gray);
     };
@@ -30,7 +28,6 @@
     Logger.prototype.verbose = function (msg) {
         console.log(msg.green);
     };
-
 
     //shortcuts
     Logger.prototype.w = Logger.prototype.warn;
