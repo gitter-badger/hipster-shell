@@ -1,8 +1,6 @@
-import process from 'process';
-
 class CD {
     constructor(){
-        this.previousDir = process.cdw();
+        this.previousDir = process.cwd();
     }
 
     apply(destDir, callback){
