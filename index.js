@@ -15,7 +15,7 @@ function prompt() {
     rl.prompt();
 }
 
-console.log('Welcome to the kale shell.'.underline.yellow);
+console.log('Welcome to the hipster-shell.'.underline.yellow);
 
 function runProcess(command, args) {
     child = childProcess.spawn(command, args, {
@@ -32,15 +32,11 @@ function runProcess(command, args) {
     });
 
     child.on('close', function (code) {
-        // console.log('child process exited with code ' + code);
+        console.log('child process exited with code ' + code);
         prompt();
         child = undefined;
     });
 }
-
-// rl.setPrompt('OHAI> ');
-
-prompt();
 
 rl.on('line', function (input) {
     input = input.trim();
@@ -51,7 +47,7 @@ rl.on('line', function (input) {
     var args = input.split(' '); //TODO remove more than one spaces too
     var command = args[0];
     args = args.splice(1);
-    
+
     //check for custom commands
     if (command === 'cd') {
         var destDir;
@@ -61,17 +57,19 @@ rl.on('line', function (input) {
             if (args[0] === '-') {
                 throw 'cd - not implemented yet';
             }
-            
+
             destDir = args[0];
         } else {
             throw 'cd not yet full implemented';
         }
         process.chdir(destDir);
+        prompt();
     } else if (input.length > 0) {
         //execute as a child process
         runProcess(command, args);
+    } else {
+        prompt();
     }
-    prompt();
 }).on('SIGINT', function () {
     // console.log('SIGINT! closing child process!')
     if (child) {
@@ -82,3 +80,5 @@ rl.on('line', function (input) {
     console.log('Cya!');
     process.exit(0);
 });
+
+prompt();
