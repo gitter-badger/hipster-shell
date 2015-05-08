@@ -1,5 +1,6 @@
 # TODO list
-Seriously... there's nothing done yet, so, everything's gotta be done. This list will most likely grow exponentially in the first months.
+Seriously... there's nothing done yet, so, everything's gotta be done.
+This list will most likely grow exponentially in the first months.
 
 ## Development
 * Define an architecture for the source code
@@ -19,6 +20,7 @@ Pending categorization. Pretty much everything that comes on our mind.
 
 * /etc/motd
 * Pipes
+* pushd / popd
 
 
 
