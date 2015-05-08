@@ -20,4 +20,4 @@ gulp.task('watch', function(){
     gulp.watch(paths.src, ['build']);
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['build']);
