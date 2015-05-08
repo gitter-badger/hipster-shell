@@ -27,7 +27,7 @@ function changeDir(destDir) {
     }
 
     previousDir = process.cwd();
-    
+
     try {
         process.chdir(destDir);
     } catch (err) {
@@ -80,7 +80,7 @@ rl.on('line', function (input) {
     if (command === 'cd') {
         var destDir;
         if (args.length === 0) {
-            destDir = process.env.HOME;
+            destDir = process.env.HOME || '.';
         } else {
             destDir = args[0];
         }
