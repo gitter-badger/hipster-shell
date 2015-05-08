@@ -72,7 +72,7 @@ rl.on('line', function (input) {
     input = input.replace(/\s+/g, ' ');
 
     //check if it has arguments
-    var args = input.split(' '); //TODO remove more than one spaces too
+    var args = input.split(' ');
     var command = args[0];
     args = args.splice(1);
 
