@@ -66,7 +66,11 @@ rl.on('line', function (input) {
             destDir = args[0];
         }
 
-        cd.apply(destDir);
+        cd.apply(destDir, function(err) {
+            if (err) {
+                logger.e(err);
+            }
+        });
         prompt();
     } else if (input.length > 0) {
         //execute as a child process

@@ -6,6 +6,7 @@ class CD {
     apply(destDir, callback){
         if(destDir === '-'){
             this.apply(this.previousDir, callback);
+            return;
         }
 
         this.previousDir = process.cwd();
