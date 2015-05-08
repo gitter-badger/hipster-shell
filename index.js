@@ -4,6 +4,7 @@ var readline = require('readline'),
     os = require('os'),
     fs = require('fs'),
     log = require('./log.js'),
+    cd = require('./cd.js'),
     childProcess = require('child_process'),
     rl = readline.createInterface(process.stdin, process.stdout);
 
@@ -11,7 +12,6 @@ require('colors');
 
 //reference to a foreground child process
 var child;
-var previousDir = process.cwd();
 
 function prompt() {
     rl.setPrompt(os.hostname() + ' @ ' + process.cwd() + ' > '.green);
@@ -19,24 +19,6 @@ function prompt() {
 }
 
 log.w('Welcome to the hipster-shell.'.underline.yellow);
-
-function changeDir(destDir) {
-    if (destDir === '-') {
-        changeDir(previousDir);
-        return;
-    }
-
-    previousDir = process.cwd();
-
-    try {
-        process.chdir(destDir);
-    } catch (err) {
-        if (err.code === 'ENOENT') {
-            log.e(destDir + ': No such file or directory.');
-        }
-        return;
-    }
-}
 
 function runProcess(command, args) {
     child = childProcess.spawn(command, args, {
@@ -85,7 +67,7 @@ rl.on('line', function (input) {
             destDir = args[0];
         }
 
-        changeDir(destDir);
+        cd.apply(destDir);
         prompt();
     } else if (input.length > 0) {
         //execute as a child process
