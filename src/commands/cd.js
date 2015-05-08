@@ -24,4 +24,4 @@ class CD {
     }
 }
 
-export default CD();
+export default new CD();
