@@ -2,73 +2,87 @@ import childProcess from 'child_process';
 import readline from 'readline';
 import os from 'os';
 import fs from 'fs';
-import 'colors';
+import colors from 'colors';
+import path from 'path';
 
-import logger from './util/logger';
-import cd from'./commands/cd.js';
+import log from './util/logger.js';
+import config from './config.js';
 
 const rl = readline.createInterface(process.stdin, process.stdout);
 
 //reference to a foreground child process
-var child;
+let child;
+let commands = {};
 
 function prompt() {
     rl.setPrompt(os.hostname() + ' @ ' + process.cwd() + ' > '.green);
     rl.prompt();
 }
 
-logger.w('Welcome to the hipster-shell.'.underline.yellow);
+log.w('Welcome to the hipster-shell.'.underline.yellow);
+
+function initializeCommands() {
+    log.d('initializeCommands');
+    fs.readdir(config.dirs.commands, (err, files) => {
+        if (err) {
+            log.e(err);
+            return;
+        }
+        files.forEach((file) => {
+            let modulePath = path.join(config.dirs.commands, file);
+            //TODO replace with System when node supports it
+            let moduleClass = require(modulePath);
+            let module = new moduleClass();
+            commands[module.name] = module;
+            log.i('Loaded module: ' + module.constructor.name);
+        });
+    });
+}
+initializeCommands();
 
 function runProcess(command, args) {
     child = childProcess.spawn(command, args, {
         stdio: [
             'inherit'
         ]
-    }).on('error', function (err) {
+    }).on('error', (err) => {
         if (err.code === 'ENOENT') {
-            logger.i('Command not found: ' + command);
+            log.i('Command not found: ' + command);
         } else {
-            logger.e('Unknown error: ' + err);
+            log.e('Unknown error: ' + err);
         }
     });
 
-    child.stdout.on('data', function (data) {
-        logger.i('' + data); //note data to string conversion
+    child.stdout.on('data', (data) => {
+        log.i('' + data); //note data to string conversion
     });
 
-    child.stderr.on('data', function (data) {
-        logger.e('' + data);
+    child.stderr.on('data', (data) => {
+        log.e('' + data);
     });
 
-    child.on('close', function (code) {
-        logger.d('child process exited with code ' + code);
+    child.on('close', (code) => {
+        log.d('child process exited with code ' + code);
         prompt();
         child = undefined;
     });
 }
 
-rl.on('line', function (input) {
+rl.on('line', (input) => {
     input = input.trim();
     //remove lots of spaces
     input = input.replace(/\s+/g, ' ');
 
     //check if it has arguments
-    var args = input.split(' ');
-    var command = args[0];
+    let args = input.split(' ');
+    let command = args[0];
     args = args.splice(1);
 
     //check for custom commands
-    if (command === 'cd') {
-        var destDir;
-        if (args.length === 0) {
-            destDir = process.env.HOME || '.';
-        } else {
-            destDir = args[0];
-        }
-
-        cd.apply(destDir, function(err) {
+    if (commands[command] !== undefined) {
+        commands[command].apply(args, (err) => {
             if (err) {
-                logger.e(err);
+                log.e(err);
             }
         });
         prompt();
@@ -78,13 +92,13 @@ rl.on('line', function (input) {
     } else {
         prompt();
     }
-}).on('SIGINT', function () {
+}).on('SIGINT', () => {
     if (child) {
         child.kill('SIGINT');
     }
     prompt();
-}).on('close', function () {
-    logger.w('Cya!');
+}).on('close', () => {
+    log.w('Cya!');
     process.exit(0);
 });
 

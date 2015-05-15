@@ -1,52 +1,57 @@
 import 'colors';
 
-const log = function(message, color){
-    console.log(color ? message[color] : message);
+const log = function(message, color) {
+    if (!message) {
+        console.log('undefined' [color]);
+    } else if (message.constructor === Array ||
+        message.constructor === Object) {
+        console.log(JSON.stringify(message)[color]);
+    } else {
+        console.log(color ? message[color] : message);
+    }
 };
 
-
 class Logger {
-    warn(message){
+    warn(message) {
         log(message, 'yellow');
     }
 
-    info(message){
+    info(message) {
         log(message);
     }
 
-    debug(message){
+    debug(message) {
         log(message, 'grey');
     }
 
-    error(message){
+    error(message) {
         log(message, 'red');
     }
 
-    verbose(message){
+    verbose(message) {
         log(message, 'green');
     }
 
     // shortcuts
-    w(message){
+    w(message) {
         this.warn(message);
     }
 
-    i(message){
+    i(message) {
         this.info(message);
     }
 
-    d(message){
+    d(message) {
         this.debug(message);
     }
 
-    e(message){
+    e(message) {
         this.error(message);
     }
 
-    v(message){
+    v(message) {
         this.verbose(message);
     }
-
 }
 
 export default new Logger();

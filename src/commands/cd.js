@@ -1,10 +1,22 @@
-class CD {
-    constructor(){
+import Command from '../command.js';
+import argsParser from '../util/argsParser.js';
+
+/**
+ * Implements change dir behavior.
+ */
+class cd extends Command {
+    constructor() {
+        super();
         this.previousDir = process.cwd();
     }
 
-    apply(destDir, callback){
-        if(destDir === '-'){
+    get name() {
+        return 'cd';
+    }
+
+    apply(args, callback) {
+        let destDir = argsParser.singleDestDir(args);
+        if (destDir === '-') {
             this.apply(this.previousDir, callback);
             return;
         }
@@ -13,8 +25,8 @@ class CD {
 
         try {
             process.chdir(destDir);
-        } catch(err){
-            if(err.code === 'ENOENT'){
+        } catch (err) {
+            if (err.code === 'ENOENT') {
                 callback(`${destDir} : No such file or directory`);
             } else {
                 callback(err);
@@ -23,4 +35,4 @@ class CD {
     }
 }
 
-export default new CD();
+export default cd;
