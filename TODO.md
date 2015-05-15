@@ -7,9 +7,20 @@ This list will most likely grow exponentially in the first months.
 * Define code styling
 
 ## Things we cannot live without
-* Tab completion
+* Bash syntax
+* Syntax highliting
+* Auto-correction
+* Value prompt
+* Command name completion
+* Automatic suggestions
+* Path completion
+* Directory history/stack
+* Willcard completion
+* Command argument completion
 * Colors
+* Searchable command history
 * Customization using web interface (hipsters) or configuration scripts (hippies)
+* More features ([link](http://en.wikipedia.org/wiki/Comparison_of_command_shells))
 
 ## Features
 * Easily extendability with javascript plugins
@@ -19,7 +30,7 @@ This list will most likely grow exponentially in the first months.
 Pending categorization. Pretty much everything that comes on our mind.
 
 * /etc/motd
-* Pipes
+* Stream redirections
 * pushd / popd
 
 

@@ -4,6 +4,22 @@
 ## Goals
 To have a fully functional command line shell that is fast and easily extendable with Javascript.
 
+### Comparison to regular shells
+The idea of making a command line interpreter in javascript might seem counter intuitive.
+
+Why do we use bash scripting when we can have javascript?
+
+#### Advantages
+* Faster development times when compared to C/C++ implemented shells
+* Huge developer base (more contributions)
+* ...
+
+#### Disadvantages
+* Higher memory footprint (when compared to C/C++ implemented shells)
+	* We have to run the node runtime
+	* Perhaps we could share the runtime with several shell instances
+* ...
+
 ## TODO
 Check our [TODO](TODO.md) list
 
