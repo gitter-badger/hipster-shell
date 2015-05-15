@@ -18,7 +18,7 @@ gulp.task('watch', function() {
     gulp.watch(paths.src, ['build']);
 });
 
-gulp.task('serve', function() {
+gulp.task('serve', ['build'], function() {
     pl.nodemon({
         script: 'index.js',
         ext: 'js html',
