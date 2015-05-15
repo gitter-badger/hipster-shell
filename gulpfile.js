@@ -1,23 +1,32 @@
 var gulp = require('gulp');
-var babel = require('gulp-babel');
-
-var path = require('path');
-
+var pl = require('gulp-load-plugins')({
+    lazy: false
+});
 
 var paths = {
     src: ['src/**/*.js'],
-    build: 'build',
-    sourceRoot: path.join(__dirname, 'src')
+    build: 'build'
 };
 
-gulp.task('build', function(){
+gulp.task('build', function() {
     return gulp.src(paths.src)
-        .pipe(babel())
+        .pipe(pl.babel())
         .pipe(gulp.dest(paths.build));
 });
 
-gulp.task('watch', function(){
+gulp.task('watch', function() {
     gulp.watch(paths.src, ['build']);
+});
+
+gulp.task('serve', function() {
+    pl.nodemon({
+        script: 'index.js',
+        ext: 'js html',
+        env: {
+            'NODE_ENV': 'development'
+        },
+        tasks: ['build']
+    });
 });
 
 gulp.task('default', ['build']);
