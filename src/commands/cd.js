@@ -7,7 +7,6 @@ import argsParser from '../util/argsParser.js';
 class cd extends Command {
     constructor() {
         super();
-        this.previousDir = process.cwd();
     }
 
     get name() {
@@ -17,11 +16,11 @@ class cd extends Command {
     apply(args, callback) {
         let destDir = argsParser.singleDestDir(args);
         if (destDir === '-') {
-            this.apply(this.previousDir, callback);
+            let previousDir = process.env.OLDPWD || '.';
+            this.apply([previousDir], callback);
             return;
         }
-
-        this.previousDir = process.cwd();
+        process.env.OLDPWD = process.cwd();
 
         try {
             process.chdir(destDir);
