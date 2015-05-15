@@ -15,11 +15,12 @@ let child;
 let commands = {};
 
 function prompt() {
-    rl.setPrompt(os.hostname() + ' @ ' + process.cwd() + ' > '.green);
+    rl.setPrompt(`${os.hostname()}@${process.cwd()} > `);
     rl.prompt();
 }
 
 log.w('Welcome to the hipster-shell.'.underline.yellow);
+process.title = 'hipster-shell';
 
 function initializeCommands() {
     log.d('initializeCommands');
@@ -34,7 +35,7 @@ function initializeCommands() {
             let moduleClass = require(modulePath);
             let module = new moduleClass();
             commands[module.name] = module;
-            log.i('Loaded module: ' + module.constructor.name);
+            log.i(`Loaded module: ${module.constructor.name}`);
         });
     });
 }
@@ -62,7 +63,7 @@ function runProcess(command, args) {
     });
 
     child.on('close', (code) => {
-        log.d('child process exited with code ' + code);
+        log.d(`child process exited with code ${code}`);
         prompt();
         child = undefined;
     });

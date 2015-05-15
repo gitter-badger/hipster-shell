@@ -17,7 +17,7 @@ class exit extends Command {
         if (args.length < 2) {
             process.exit(args);
         } else {
-            log.e(this.name + ': Invalid arguments');
+            log.e(`${this.name}: Invalid arguments`);
         }
         callback();
     }
