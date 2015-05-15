@@ -13,12 +13,13 @@ class exit extends Command {
         return 'exit';
     }
 
-    apply(args) {
+    apply(args, callback) {
         if (args.length < 2) {
             process.exit(args);
         } else {
             log.e(this.name + ': Invalid arguments');
         }
+        callback();
     }
 }
 
