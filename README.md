@@ -20,6 +20,14 @@ Why do we use bash scripting when we can have javascript?
 	* Perhaps we could share the runtime with several shell instances
 * ...
 
+## Development guide
+Fast guide to start development on the hipster-shell:
+
+1. Clone this repository
+2. Install dependencies with `npm install`
+3. Watch for changes in the files with `gulp serve`
+4. ...
+
 ## TODO
 Check our [TODO](TODO.md) list
 
