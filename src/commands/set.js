@@ -1,6 +1,10 @@
 import Command from '../command.js';
 import argsParser from '../util/argsParser.js';
 import log from '../util/logger.js';
+import {
+    Readable
+}
+from 'stream';
 
 /**
  * Implements set behavior.
@@ -15,18 +19,20 @@ class set extends Command {
         return 'set';
     }
 
-    apply(args, callback) {
+    apply(args) {
+        let stream = new Readable();
         if (args.length > 0) {
-            callback('set does not yet accept arguments');
-            return;
-        }
-        
-        for (var key in process.env) {
-            if (process.env.hasOwnProperty(key)) {
-                log.v(key + ': ' + process.env[key]);
+            stream.push('set does not yet accept arguments\n');
+        } else {
+            for (var key in process.env) {
+                if (process.env.hasOwnProperty(key)) {
+                    stream.push(`${key}: ${process.env[key]}`);
+                    stream.push('\n');
+                }
             }
         }
-        callback();
+        stream.push(null);
+        return stream;
     }
 }
 

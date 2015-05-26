@@ -1,35 +1,62 @@
-import 'colors';
+import config from '../config.js';
+import fs from 'fs';
 
-const log = function(message, color) {
-    if (!message) {
-        console.log('undefined' [color]);
-    } else if (message.constructor === Array ||
-        message.constructor === Object) {
-        console.log(JSON.stringify(message)[color]);
+/**
+ * Logger class. For the time being it appends everything to a file.
+ */
+
+const log = function(message) {
+    message += '\n';
+    if (false) {
+        fs.appendFile(config.log.file, message + '\n', function(err) {
+            if (err) {
+                throw 'Error writing log to file: ' + err;
+            }
+        });        
     } else {
-        console.log(color ? message[color] : message);
+        fs.appendFileSync(config.log.file, message);
     }
 };
 
 class Logger {
+    constructor() {
+        console.log(`Temp dir is ${config.log.file}`);
+    }
+
+    _sanitize(message) {
+        if (!message) {
+            return 'undefined';
+        } else if (message.constructor === Array ||
+            message.constructor === Object) {
+                return JSON.stringify(message);
+        } else {
+            return String(message);
+        }
+    }
+
     warn(message) {
-        log(message, 'yellow');
+        message = this._sanitize(message);
+        log('W: ' + message);
     }
 
     info(message) {
-        log(message);
+        message = this._sanitize(message);
+        log('I: ' + message);
     }
 
     debug(message) {
-        log(message, 'grey');
+        message = this._sanitize(message);
+        log('D: ' + message);
     }
 
     error(message) {
-        log(message, 'red');
+        message = this._sanitize(message);
+        log('E: ' + message);
     }
 
     verbose(message) {
-        log(message, 'green');
+        message = this._sanitize(message);
+        log('V: ' + message);
     }
 
     // shortcuts

@@ -1,5 +1,9 @@
 import Command from '../command.js';
 import argsParser from '../util/argsParser.js';
+import {
+    Readable
+}
+from 'stream';
 
 /**
  * Implements change dir behavior.
@@ -13,12 +17,12 @@ class cd extends Command {
         return 'cd';
     }
 
-    apply(args, callback) {
+    apply(args) {
+        let stream = new Readable();
         let destDir = argsParser.singleDestDir(args);
         if (destDir === '-') {
             let previousDir = process.env.OLDPWD || '.';
-            this.apply([previousDir], callback);
-            return;
+            return this.apply([previousDir]);
         }
         process.env.OLDPWD = process.cwd();
 
@@ -26,11 +30,13 @@ class cd extends Command {
             process.chdir(destDir);
         } catch (err) {
             if (err.code === 'ENOENT') {
-                callback(`${destDir} : No such file or directory`);
+                stream.push(`${destDir} : No such file or directory\n`);
             } else {
-                callback(err);
+                stream.emit('error', err);
             }
         }
+        stream.push(null);
+        return stream;
     }
 }
 

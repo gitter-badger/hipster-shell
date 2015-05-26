@@ -1,5 +1,9 @@
 import Command from '../command.js';
 import log from '../util/logger.js';
+import {
+    Readable
+}
+from 'stream';
 
 /**
  * Implements echo behavior.
@@ -13,9 +17,12 @@ class echo extends Command {
         return 'echo';
     }
 
-    apply(args, callback) {
-        log.v(args.join(' '));
-        callback();
+    apply(args) {
+        let stream = new Readable();
+        stream.push(args.join(' '));
+        stream.push('\n');
+        stream.push(null);
+        return stream;
     }
 }
 

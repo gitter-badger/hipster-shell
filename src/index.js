@@ -1,107 +1,77 @@
-import childProcess from 'child_process';
 import readline from 'readline';
+import glob from 'glob';
 import os from 'os';
-import fs from 'fs';
-import colors from 'colors';
-import path from 'path';
 
 import log from './util/logger.js';
-import config from './config.js';
+import terminal from './terminal.js';
+import commandManager from './command.js';
+import argsParser from './util/argsParser.js';
 
 const rl = readline.createInterface(process.stdin, process.stdout);
-
-//reference to a foreground child process
-let child;
-let commands = {};
 
 function prompt() {
     rl.setPrompt(`${os.hostname()}@${process.cwd()} > `);
     rl.prompt();
 }
 
-log.w('Welcome to the hipster-shell.'.underline.yellow);
 process.title = 'hipster-shell';
-
-function initializeCommands() {
-    log.d('initializeCommands');
-    fs.readdir(config.dirs.commands, (err, files) => {
-        if (err) {
-            log.e(err);
-            return;
-        }
-        files.forEach((file) => {
-            let modulePath = path.join(config.dirs.commands, file);
-            //TODO replace with System when node supports it
-            let moduleClass = require(modulePath);
-            let module = new moduleClass();
-            commands[module.name] = module;
-            log.i(`Loaded module: ${module.constructor.name}`);
-        });
-    });
-}
-initializeCommands();
-
-function runProcess(command, args) {
-    child = childProcess.spawn(command, args, {
-        stdio: [
-            'inherit'
-        ]
-    }).on('error', (err) => {
-        if (err.code === 'ENOENT') {
-            log.i('Command not found: ' + command);
-        } else {
-            log.e('Unknown error: ' + err);
-        }
-    });
-
-    child.stdout.on('data', (data) => {
-        log.i('' + data); //note data to string conversion
-    });
-
-    child.stderr.on('data', (data) => {
-        log.e('' + data);
-    });
-
-    child.on('close', (code) => {
-        log.d(`child process exited with code ${code}`);
-        prompt();
-        child = undefined;
-    });
-}
 
 rl.on('line', (input) => {
     input = input.trim();
     //remove lots of spaces
     input = input.replace(/\s+/g, ' ');
 
+    log.d('input ' + JSON.stringify(input));
+
     //check if it has arguments
     let args = input.split(' ');
+    args = argsParser.replaceEnvVariables(args);
+
     let command = args[0];
     args = args.splice(1);
 
-    //check for custom commands
-    if (commands[command] !== undefined) {
-        commands[command].apply(args, (err) => {
-            if (err) {
-                log.e(err);
-            }
-        });
-        prompt();
-    } else if (input.length > 0) {
-        //execute as a child process
-        runProcess(command, args);
+    log.d('args ' + JSON.stringify(args));
+    
+    args.forEach((arg) => {
+        if (glob.hasMagic(arg)) {
+            //TODO FIX
+            log.d(arg + ' has glob magic');
+            console.log(glob.sync(arg));
+            
+        }
+    });
+    
+    log.d('args ' + JSON.stringify(args));
+    if (command.length > 0) {
+        try {
+            let stream = commandManager.exec(command, args);
+            stream.pipe(process.stdout);
+            stream.on('error', (err) => {
+                log.e('stream error');
+                log.e(err.stack);
+                prompt();
+            });
+            stream.on('end', () => {
+                log.i('Stream end');
+                prompt();
+            });
+        } catch (err) {
+            console.error(err.stack);
+            prompt();
+        }
     } else {
         prompt();
     }
-}).on('SIGINT', () => {
-    if (child) {
-        child.kill('SIGINT');
-    }
+}).on('SIGINT', (err) => {
+    log.e('SIGINT');
+    log.e(err.stack);
     prompt();
+}).on('error', (err) => {
+    console.log(err.stack);
 }).on('close', () => {
     log.w('Cya!');
     process.exit(0);
 });
 
-readline.clearScreenDown(process.stdout);
+//readline.clearScreenDown(process.stdout);
 prompt();
