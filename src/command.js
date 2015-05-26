@@ -48,7 +48,7 @@ class Command {
                 let ModuleClass = require(modulePath);
                 let module = new ModuleClass();
                 globals.commands[module.name] = module;
-                log.i(`Loaded module: ${module.constructor.name}`);
+                log.i(`Loaded module: ${module.name}`);
             });
         });
     }
