@@ -11,7 +11,8 @@ Why do we use bash scripting when we can have javascript?
 
 #### Advantages
 * Faster development times when compared to C/C++ implemented shells
-* Huge developer base (more contributions)
+* Huge developer base (leads to more contributions, more code analysis)
+* Javascript plugins/modules, faster to execute than to interpret shell ones
 * ...
 
 #### Disadvantages
@@ -19,6 +20,10 @@ Why do we use bash scripting when we can have javascript?
 	* We have to run the node runtime
 	* Perhaps we could share the runtime with several shell instances
 * ...
+
+## Performance guide
+1. All commands use streams to pass buffer data
+2. ...
 
 ## Development guide
 Fast guide to start development on the hipster-shell:
