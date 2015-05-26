@@ -42,7 +42,7 @@ rl.on('line', (input) => {
     });
     
     log.d('args ' + JSON.stringify(args));
-    if (command.length > 0) {
+    if (command && command.length > 0) {
         try {
             let stream = commandManager.exec(command, args);
             stream.pipe(process.stdout);
