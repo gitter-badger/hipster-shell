@@ -8,7 +8,7 @@ from 'stream';
 /**
  * Implements echo behavior.
  */
-class echo extends Command {
+export default class extends Command {
     constructor() {
         super();
     }
@@ -25,5 +25,3 @@ class echo extends Command {
         return stream;
     }
 }
-
-export default echo;

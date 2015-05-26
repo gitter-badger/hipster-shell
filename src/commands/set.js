@@ -10,7 +10,7 @@ from 'stream';
  * Implements set behavior.
  * See http://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html
  */
-class set extends Command {
+export default class extends Command {
     constructor() {
         super();
     }
@@ -35,5 +35,3 @@ class set extends Command {
         return stream;
     }
 }
-
-export default set;

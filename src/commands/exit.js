@@ -12,7 +12,7 @@ from 'stream';
  * If n is omitted, the exit status is that of the last command executed.
  * Any trap on EXIT is executed before the shell terminates.
  */
-class exit extends Command {
+export default class extends Command {
     constructor() {
         super();
     }
@@ -32,5 +32,3 @@ class exit extends Command {
         return stream;
     }
 }
-
-export default exit;

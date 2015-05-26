@@ -8,7 +8,7 @@ from 'stream';
 /**
  * Implements change dir behavior.
  */
-class cd extends Command {
+export default class extends Command {
     constructor() {
         super();
     }
@@ -39,5 +39,3 @@ class cd extends Command {
         return stream;
     }
 }
-
-export default cd;

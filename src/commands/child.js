@@ -3,7 +3,7 @@ import childProcess from 'child_process';
 import Command from '../command.js';
 import log from '../util/logger.js';
 
-class child extends Command {
+export default class extends Command {
     constructor() {
         super();
     }
@@ -31,5 +31,3 @@ class child extends Command {
         return childStream.stdout;
     }
 }
-
-export default child;
